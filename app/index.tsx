@@ -1,47 +1,67 @@
-import { FixedText } from "@/components/FixedText";
-import { Button } from "@/components/ui/button";
+import { MusicNotesAnimation } from "@/components/MusicNotesAnimation";
 import { Center } from "@/components/ui/center";
 import { Spinner } from "@/components/ui/spinner";
 import { useUser } from "@/hooks/auth/useUser";
-import { fontWeightStyles } from "@/styles/commonStyles";
-import { StyleSheet, Text, View } from "react-native";
+import { StatusBar } from "expo-status-bar";
+import React from "react";
+import { ScrollView, StyleSheet, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-
-export const titleStyles = StyleSheet.create({
-	pageTitle: {
-		zIndex: 0,
-		fontFamily: fontWeightStyles.black.fontFamily,
-		fontSize: 130,
-		textShadowColor: "#aaa",
-		textShadowOffset: { width: 5, height: 5 },
-		textShadowRadius: 0,
-	},
-});
 
 export default function Index() {
 	const { user, isOffline } = useUser();
 
-	console.log("user", user);
-	if (user && !user.gameData)
+	// Loading state while user data is being fetched
+	if (user && !user.gameData) {
 		return (
-			<SafeAreaView>
+			<SafeAreaView style={styles.loadingContainer}>
 				<Center className="w-full h-full">
 					<Spinner />
 				</Center>
 			</SafeAreaView>
 		);
+	}
 
 	return (
-		<View style={{ flex: 1, padding: 20, backgroundColor: "#ff0000" }}>
-			<Text>Hi</Text>
-			<Button
-				onPress={() => {
-					console.log("Button pressed");
-				}}
+		<SafeAreaView style={styles.container}>
+			<StatusBar style="light" />
+			{/* Music notes animation in the background */}
+			<MusicNotesAnimation />
+
+			<ScrollView
+				style={styles.scrollView}
+				contentContainerStyle={styles.scrollViewContent}
+				showsVerticalScrollIndicator={false}
 			>
-				<FixedText>Hi</FixedText>
-			</Button>
-			<FixedText size="5xl">מהן המילים?</FixedText>
-		</View>
+				{/* Extra space at the bottom for better scrolling */}
+				<View style={styles.bottomSpacer} />
+			</ScrollView>
+		</SafeAreaView>
 	);
 }
+
+const styles = StyleSheet.create({
+	container: {
+		flex: 1,
+		backgroundColor: "#6A11CB", // Fallback color
+	},
+	loadingContainer: {
+		flex: 1,
+		backgroundColor: "#6A11CB",
+	},
+	scrollView: {
+		flex: 1,
+	},
+	scrollViewContent: {
+		flexGrow: 1,
+		paddingBottom: 30,
+	},
+	logoContainer: {
+		alignItems: "center",
+		justifyContent: "center",
+		marginTop: 10,
+		marginBottom: 10,
+	},
+	bottomSpacer: {
+		height: 40,
+	},
+});
